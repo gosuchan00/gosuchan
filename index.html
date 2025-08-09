@@ -4,180 +4,33 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>My Math Notes</title>
-
-  <!-- KaTeX for fast LaTeX rendering -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" integrity="sha384-vZTG6GQZqKqJH1+X1Y0qz5qk8fKXJm+gR6gQv4ZGb0rD0I1qQ0qH+8xkD7f5f1bZ" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false},{left:'$',right:'$',display:false}],throwOnError:false});"></script>
-
-  <!-- Marked (Markdown -> HTML) -->
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-
   <style>
-    :root{--bg:#ffffff;--paper:#fbfbfb;--text:#111827;--muted:#6b7280;--accent:#2563eb;--card:#f8fafc}
-    [data-theme="dark"]{--bg:#0b1220;--paper:#071022;--text:#e6eef8;--muted:#9aa7bf;--accent:#60a5fa;--card:#07162a}
-    html,body{height:100%;margin:0;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial}
-    .container{max-width:980px;margin:28px auto;padding:20px}
-    header{display:flex;gap:16px;align-items:center;justify-content:space-between}
-    header h1{margin:0;font-size:1.4rem}
-    .meta{color:var(--muted);font-size:0.9rem}
-
-    main{display:grid;grid-template-columns:1fr 320px;gap:24px;margin-top:20px}
-    .posts{background:var(--paper);padding:18px;border-radius:12px;box-shadow:0 6px 20px rgba(2,6,23,0.06)}
-    .sidebar{background:var(--card);padding:18px;border-radius:12px;height:fit-content}
-
-    .post{border-left:3px solid var(--accent);padding:12px;margin-bottom:14px;background:transparent;border-radius:6px}
-    .post h2{margin:0 0 8px 0}
-    .post .date{color:var(--muted);font-size:0.85rem;margin-bottom:8px}
-
-    /* Theorem / proof boxes */
-    .theorem{border-left:4px solid #0ea5a4;padding:10px 12px;background:rgba(14,165,164,0.04);border-radius:6px;margin:12px 0}
-    .proof{border-left:4px solid #f97316;padding:10px 12px;background:rgba(249,115,22,0.04);border-radius:6px;margin:12px 0}
-
-    /* Editor */
-    .editor{display:flex;flex-direction:column;gap:8px}
-    textarea{width:100%;min-height:180px;padding:12px;border-radius:8px;border:1px solid #e6e9ef;background:transparent;color:var(--text);resize:vertical}
-    input[type=text]{width:100%;padding:8px;border-radius:6px;border:1px solid #e6e9ef}
-    button{background:var(--accent);color:white;border:0;padding:10px 12px;border-radius:8px;cursor:pointer}
-    .muted{color:var(--muted);font-size:0.9rem}
-
-    /* small screens */
-    @media (max-width:880px){main{grid-template-columns:1fr} .sidebar{order:2}}
+    body { font-family: sans-serif; line-height: 1.6; margin: 0; padding: 20px; }
+    header { border-bottom: 1px solid #ccc; margin-bottom: 20px; }
+    h1 { margin: 0; }
+    article { margin-bottom: 40px; }
+    .date { font-size: 0.9em; color: gray; }
   </style>
 </head>
 <body>
-  <div class="container" id="app">
-    <header>
-      <div>
-        <h1>Math Notes</h1>
-        <div class="meta">수학과 학생을 위한 간단한 블로그 템플릿 — Markdown + LaTeX 지원</div>
-      </div>
-      <div style="display:flex;gap:8px;align-items:center">
-        <label class="muted">테마</label>
-        <select id="themeSelect">
-          <option value="light">Light</option>
-          <option value="dark">Dark</option>
-        </select>
-      </div>
-    </header>
+  <header>
+    <h1>나의 수학 블로그</h1>
+    <p>Markdown 없이, HTML과 LaTeX만으로 작성된 정적 페이지</p>
+  </header>
 
-    <main>
-      <section class="posts" id="postsArea">
-        <!-- Posts will be injected here -->
-      </section>
-
-      <aside class="sidebar">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-          <strong>새 글 작성</strong>
-          <small class="muted">로컬에 저장 · 내보내기 가능</small>
-        </div>
-
-        <div class="editor">
-          <input type="text" id="postTitle" placeholder="제목을 입력하세요" />
-          <textarea id="postContent" placeholder="Markdown + LaTeX (인라인 $...$, 블록 $$...$$)"></textarea>
-          <div style="display:flex;gap:8px">
-            <button id="saveBtn">저장</button>
-            <button id="previewBtn" style="background:#10b981">미리보기</button>
-            <button id="exportBtn" style="background:#6b7280">HTML 내보내기</button>
-          </div>
-          <div style="margin-top:10px" class="muted">작성한 글은 브라우저 로컬스토리지에 저장됩니다. GitHub Pages에 영구 배포하려면 저장된 내용을 리포지토리의 posts/*.md로 이전하세요.</div>
-        </div>
-
-        <hr style="margin:12px 0"/>
-        <div>
-          <strong>단축 도움말</strong>
-          <ul class="muted">
-            <li>정리: <code>### Theorem: ...</code> 사용</li>
-            <li>증명: `<div class="proof">Proof: ...</div>` 대신 Markdown에서 직접 <code>\begin{proof} ... \end{proof}</code> 스타일을 쓰지 않아도 됩니다.</li>
-            <li>수식: 인라인 <code>$a+b$</code>, 블록 <code>$$\sum_{n=1}^\infty\frac{1}{n^2}$$</code></li>
-          </ul>
-        </div>
-      </aside>
-    </main>
-  </div>
-
-  <template id="postTemplate">
-    <article class="post">
-      <h2 class="title"></h2>
-      <div class="date"></div>
-      <div class="content"></div>
+  <main>
+    <article>
+      <h2>첫 번째 글: 수학적 귀납법</h2>
+      <div class="date">2025-08-09</div>
+      <p>자연수 <span class="katex">$n$</span>에 대해 명제가 참임을 보이는 방법은 다음과 같다:</p>
+      <ol>
+        <li>기저 단계: <span class="katex">$n=1$</span>일 때 성립함을 보인다.</li>
+        <li>귀납 단계: 어떤 <span class="katex">$k$</span>에서 성립한다고 가정하고, <span class="katex">$k+1$</span>에서도 성립함을 보인다.</li>
+      </ol>
     </article>
-  </template>
-
-  <script>
-    // --- 간단한 로컬 블로그 스토리지 ---
-    const STORAGE_KEY = 'math_blog_posts_v1'
-    const postsArea = document.getElementById('postsArea')
-    const postTitle = document.getElementById('postTitle')
-    const postContent = document.getElementById('postContent')
-    const saveBtn = document.getElementById('saveBtn')
-    const previewBtn = document.getElementById('previewBtn')
-    const exportBtn = document.getElementById('exportBtn')
-
-    function loadPosts(){
-      const raw = localStorage.getItem(STORAGE_KEY)
-      try{ return raw? JSON.parse(raw) : [] }catch(e){return []}
-    }
-    function savePosts(posts){ localStorage.setItem(STORAGE_KEY, JSON.stringify(posts)) }
-
-    function renderList(){
-      postsArea.innerHTML = ''
-      const posts = loadPosts().sort((a,b)=>new Date(b.date)-new Date(a.date))
-      if(posts.length===0){ postsArea.innerHTML = '<div class="muted">아직 글이 없습니다. 오른쪽에서 새 글을 작성하세요.</div>'; return }
-      for(const p of posts){
-        const tpl = document.getElementById('postTemplate').content.cloneNode(true)
-        tpl.querySelector('.title').textContent = p.title
-        tpl.querySelector('.date').textContent = new Date(p.date).toLocaleString()
-        const html = marked.parse(p.content || '')
-        tpl.querySelector('.content').innerHTML = html
-        // render math inside this post (KaTeX auto-render will run on the whole document on load; re-run for dynamic content)
-        postsArea.appendChild(tpl)
-      }
-      // re-run KaTeX auto-render on newly injected content
-      if(window.renderMathInElement){
-        renderMathInElement(postsArea, {delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false},{left:'$',right:'$',display:false}],throwOnError:false})
-      }
-    }
-
-    saveBtn.addEventListener('click',()=>{
-      const t = postTitle.value.trim() || '제목 없음'
-      const c = postContent.value.trim() || ''
-      const posts = loadPosts()
-      posts.push({id:Date.now(),title:t,content:c,date:new Date().toISOString()})
-      savePosts(posts)
-      postTitle.value=''; postContent.value=''
-      renderList()
-      alert('저장되었습니다 — 로컬 스토리지에 보관됩니다.')
-    })
-
-    previewBtn.addEventListener('click',()=>{
-      const md = postContent.value
-      const w = window.open('','_blank')
-      const html = `<!doctype html><html><head><meta charset="utf-8"><title>Preview</title><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css"></head><body>${marked.parse(md)}<script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script><script>renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false},{left:'$',right:'$',display:false}],throwOnError:false});</script></body></html>`
-      w.document.write(html); w.document.close()
-    })
-
-    exportBtn.addEventListener('click',()=>{
-      const posts = loadPosts()
-      const blob = new Blob([JSON.stringify(posts, null, 2)], {type:'application/json'})
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url; a.download = 'math_blog_posts.json'
-      a.click(); URL.revokeObjectURL(url)
-    })
-
-    // Theme
-    const themeSelect = document.getElementById('themeSelect')
-    themeSelect.addEventListener('change', (e)=>{ document.documentElement.setAttribute('data-theme', e.target.value) })
-
-    // Init
-    (function(){
-      renderList()
-      // default: 시스템 다크모드 감지
-      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme:dark)').matches
-      themeSelect.value = prefersDark? 'dark' : 'light'
-      document.documentElement.setAttribute('data-theme', themeSelect.value)
-    })()
-  </script>
+  </main>
 </body>
 </html>
